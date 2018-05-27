@@ -130,3 +130,30 @@ Una vez desinstalada la App, podemos repetir el proceso de instalación para act
 Como complemento, en el fichero _./pipeline/sp-deploy.js_ se ha creado una tarea _gulp_ que despliega e instala la solución utilizando el paquete de npm _node-sp-alm package_
 
 __Nota__: La tarea no está completa, y queda como posible futuro ejercicio el completarla para que soporte la actualización del paquete.
+
+```js
+return gulp.src(fileLocation).pipe(through.obj((file, enc, cb) => {
+
+        spAlm.add(fileName, file.contents, true, false).then(data => {
+          build.log('Solution package added');
+          const packageId = data.UniqueId;
+
+          spAlm.deploy(packageId, skipFeatureDeployment, false).then(data => {
+            build.log('Solution package deployed');
+
+            build.log('Upgrade action: ' + environmentInfo.upgrade)
+            if (!environmentInfo.upgrade) {
+              spAlm.install(packageId).then(data => {
+                build.log('Solution installed');
+                cb(null, file);
+              });
+            } else {
+              spAlm.upgrade(packageId).then(data => {
+                build.log('Solution upgraded');
+                cb(null, file);
+              });
+            }
+          });
+        });
+      })).on('finish', resolve);
+```
