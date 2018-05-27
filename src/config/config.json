@@ -1,0 +1,18 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "hello-alm-spfx-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/helloAlmSpfx/HelloAlmSpfxWebPart.js",
+          "manifest": "./src/webparts/helloAlmSpfx/HelloAlmSpfxWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "HelloAlmSpfxWebPartStrings": "lib/webparts/helloAlmSpfx/loc/{locale}.js"
+  }
+}
