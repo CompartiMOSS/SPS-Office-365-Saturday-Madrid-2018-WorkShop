@@ -40,7 +40,7 @@ Set-SPOTenantCdnEnabled -CdnType Public
 
 **Nota**: Una vez ejecutado el comando anterior, llevará algo de tiempo hasta que realmente queda configurado, puedes ver el estado del CDN con el comando _Get-SPOTenantCdnOrigins -CdnType Public_
 
-![public-cdn](./assets/public-cdn.png)
+![public-cdn](./assets/public-cdn.PNG)
 
 A la hora de hospedar nuestros scripts, tenemos varias opciones:
 1. Podemos utilizar el CDN de Azure, incluso otros servicios CDN (Cloudflare, Amazon, etc)
@@ -94,7 +94,7 @@ El proceso de instalación de la App es asíncrono, por lo que puede llevar vari
 
 Una vez desplegada e instalada la solución, puedes editar cualquier página y añadir el webpart:
 
-![webpart](./assets/webpart.png)
+![webpart](./assets/webpart.PNG)
 
 ## Update Solution
 
