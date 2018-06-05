@@ -28,7 +28,7 @@ En este repositorio podrás encontrar los materiales utilizados en el Workshop C
 
  - [1 -Como utilizar Graph y no morir en el intento](1_parte_WorkShop/Microsoft_Flow_MSGraph/lab.md)
 
- - [2 -Extendiendo Office 365 con Microsoft Graph API](1_parte_WorkShop/MVC_Web_Application/lab.md)
+ - [2 -Extendiendo Office 365 con Microsoft Graph API](1_parte_WorkShop/MVC_Web_Application/Lab.md)
 	
  - [3 - Microsfot Graph a fondo](2_parte_WorkShop/HolGraph.md)
 	
