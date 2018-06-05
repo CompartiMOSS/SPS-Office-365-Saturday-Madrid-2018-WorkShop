@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <Source>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</Source>
+    <SmallTileSource>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</SmallTileSource>
+    <MediumTileSource>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</MediumTileSource>
+    <WideTileSource>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</WideTileSource>
+    <LargeTileSource>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</LargeTileSource>
+    <AppIconSource>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</AppIconSource>
+    <SplashScreenSource>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</SplashScreenSource>
+    <PackageLogoSource>C:\Users\RobertBermejo\Desktop\microsoft_graph.png</PackageLogoSource>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DeviceId>30F105C9-681E-420b-A277-7C086EAD8A4E</DeviceId>
+    <UseEmulator>true</UseEmulator>
+  </PropertyGroup>
+</Project>
