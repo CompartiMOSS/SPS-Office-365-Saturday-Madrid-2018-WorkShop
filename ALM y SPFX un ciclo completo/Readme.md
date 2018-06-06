@@ -157,3 +157,167 @@ return gulp.src(fileLocation).pipe(through.obj((file, enc, cb) => {
         });
       })).on('finish', resolve);
 ```
+
+## API ALM
+ Por fin Microsoft ofrece unas APIs para facilitar procesos de ALM con soluciones SharePoint y todo el desarrollo moderno se puede llevar a cabo sin tener que hacer ningun workarround "tenebroso". En primer lugar vamos a ver que podemos hacer con esta API:
+ -Añadir/Quitar una solución de Spfx (Webpart o Extensión) al catálogo de aplicaciones.
+ - Habilitar/Deshabilitar una solución de Spfx (Webpart o Extensión) para que estén disponibles para su instalación en el catálogo de aplicaciones de la colección de sitios o el espacio empresarial.
+ - Instalar/Actualizar/Desinstalar en un sitio una solución dsolución de Spfx (Webpart o Extensión)
+- Listar todos y obtener los detalles de las soluciones Spfx
+
+## Métodos de la API
+
+1. Añadir un paquete de solución al catálogo de aplicaciones
+```js
+url: /_api/web/tenantappcatalog/Add(overwrite=true, url='test.txt')
+method: POST
+Authorization: Bearer <access token>
+X-RequestDigest: <form digest>
+Accept: 'application/json;odata=nometadata'
+binaryStringRequestBody: true
+body: 'byte array of the file'
+```
+2. Implementar paquetes de solución en el catálogo de aplicaciones
+```js
+url: /_api/web/tenantappcatalog/AvailableApps/GetById('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx')/Deploy
+method: POST
+Authorization: Bearer <access token>
+X-RequestDigest: <form digest>
+Accept: 'application/json;odata=nometadata'
+Content-Type: 'application/json;odata=nometadata;charset=utf-8'
+```
+3. Retirar paquetes de solución del catálogo de aplicaciones
+```js
+url: /_api/web/tenantappcatalog/AvailableApps/GetById('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx')/Retract
+method: POST
+Authorization: Bearer <access token>
+X-RequestDigest: <form digest>
+Accept: 'application/json;odata=nometadata'
+```
+4. Quitar paquetes de solución del catálogo de aplicaciones
+```js
+url: /_api/web/tenantappcatalog/AvailableApps/GetById('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx')/Remove
+method: POST
+Authorization: Bearer <access token>
+Accept: 'application/json;odata=nometadata'
+```
+5. Mostrar los paquetes disponibles en el catálogo de aplicaciones
+```js
+url: /_api/web/tenantappcatalog/AvailableApps
+method: GET
+Authorization: Bearer <access token>
+Accept: 'application/json;odata=nometadata'
+```
+6. Obtener detalles sobre paquetes de solución individuales del catálogo de aplicaciones
+```js
+url: /_api/web/tenantappcatalog/AvailableApps/GetById('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx')
+method: GET
+Authorization: Bearer <access token>
+Accept: 'application/json;odata=nometadata'
+```
+7. Instalar un paquete de solución del catálogo de aplicaciones en un sitio de SharePoint
+```js
+url: /_api/web/tenantappcatalog/AvailableApps/GetById('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx')/Install
+method: POST
+Authorization: Bearer <access token>
+X-RequestDigest: <form digest>
+Accept: 'application/json;odata=nometadata'
+```
+8. Actualizar paquetes de solución en el sitio de SharePoint
+```js
+url: /_api/web/tenantappcatalog/AvailableApps/GetById('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx')/Upgrade
+method: POST
+Authorization: Bearer <access token>
+X-RequestDigest: <form digest>
+Accept: 'application/json;odata=nometadata'
+```
+9. Desinstalar paquetes de solución del sitio de SharePoint
+```js
+url: /_api/web/tenantappcatalog/AvailableApps/GetById('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx')/Uninstall
+method: POST
+Authorization: Bearer <access token>
+X-RequestDigest: <form digest>
+Accept: 'application/json;odata=nometadata'
+```
+Nota: cuando eliminamos una aplicación mediante la API Rest la aplicación NO va a la papelera de reciclaje
+
+
+
+## Visual Studio Team Services
+## Pre-requisitos
+Para completar este laboratorio es necesario que tengamos:
+-Un Tenant de SharePoint Online con un usuario con permisos de Administrador o en su defecto que tenga acceso al catalogo de aplicaciones, y al tenant donde se va a desplegar la solución. 
+
+##Inicio 
+El proceso del ciclo de vida en SharePoint siempre ha sido una tarea compleja de llevar debido a que habia que realizar una instalación en un servidor. Este servidor en el mejor de los casos se podía compartir con otras soluciones y todo esto hacia posible que la integración continua no fuera algo estándar. 
+
+Ahora bien con la llegada de Office 365, todo esto se facilito en la medida que la plataforma lo permite. Para el despliegue de artefactos se podía haciendo uso de las librerias clientes de SharePoint Online, pero para el tema de Add-Ins/App o Spfx/Extensión no habia posibilidades de hacer un ciclo completo ya que era necesario realizar acciones de forma manual. En el siguiente laboratorio vamos a ver los siguientes aspectos:
+- Creación de una Build para garantizar el correcto funcionamiento de nuestra solución,
+- Creación de una Release para desplegar dicha solución en un nuestro tenant de Office 365.
+
+## 1. Build
+En primer lugar antes de nada vamos a aclarar terminos:
+- [strong] Build[/strong] es el proceso en el que compilamos nuestra solución y esta no tiene ningún tipo de error.
+- [strong] Release [/strong] es el proceso en el que desplegamos nuestro desarrollo en un entorno bien de desarollo/preproducción/producción de forma que podamos incorproar las nuevas funcionalidades desarrolladas.
+
+Ahora bien muchisima gente confunde los terminos e inclusive los unifica en un único proceso. Quizás sea por la propia herramienta que permite que se puedan hacer las dos acciones en los dos sitios. 
+
+Sin embargo desde mi punto de vista la build tiene una funcionalidad principal: que cuando cualquier miembro del equipo de desarrollo se descargue el código fuente este funcione. Parece obvio pero seguro que a más de uno nos ha ocurrido descargarnos un código y que este no funcione.
+La funcionalidad de la realase es claro es la de realizar las acciones necesarias para desplegar los desarrollos en un entorno. Esta claro que para mucha gente una de las acciones es compilar la solución, sin embargo si cada vez que vamos a desplegar una solucion en un entorno la tenemos que compilar esto no garantiza que el código que se esta ejecutando en dicho entorno sea el mismo.
+
+## Pasos a realizar
+1. Subir el código fuente a nuestro repositorio GIT de VSTS para ello.
+```ps
+git remote add origin https://tentant.visualstudio.com/repositorio
+git push -u origin --all
+```
+Al hacer el push se pedirá las credenciales Visual Studio Team Services
+![autenticación](./assets/vsts/login.PNG)
+
+2. Una vez esta el código fuente subido a nuestro repositorio, el siguiente paso sera crear una Build para ello apretaremos sobre lo siguiente: BUILD- & RELEASE -> Builds -> New Definition 
+![newbuild](./assets/vsts/createdefinition.PNG)
+Dentro de todas las opciones vamos a crear una definición vacia o empty
+Que es lo que va a realizar esta Build, va a hacer todo lo que necesitamos cuando nos descargamos una solución y vamos a empezar a trabajar. 
+- Instalar las dependencias o lo que es lo mismo lanzar un npm install
+- Lanzar la tarea de compilar en gulp gulp build --ship
+- Crear el paquete de la solución gulp package-solution --ship.
+- Guardarnos los ficheros resultados para que se puedan utilizar en la posterior release. 
+
+Para ello tendremos que añadir estas tareas dentro de VSTS quedando la Build como la siguiente:
+![imagenbuild](./assets/vsts/build.PNG)
+
+## Que otros procesos le podemos añadir a una Build?
+ Además de garantizar lo mínimo que es que la solución compile, otro de los puntos que podemos añadir es por ejemplo evaluar la calidad del código subido de tal forma que si hay un determinado código que no cumple con los estandares de calidad exigidos por el equipo de desarrollo. Estos cambios no se integren dentro de nuestro desarrollo. ¿Que herramientas podemos utilizar? Por ejemplo SonarQube, como anexo a dicho laboratorio seria posible incorporar un servidor de SonarQube a dicha Build para que podamos verificar si el código introducido tiene la calidad exigida por el propio equipo. De esta forma desde etapas bien tempranas del desarrollo podemos ver que nuestro código es correcto y no nos llevamos ninguna sorpresa a posteriori.
+
+## 2.- Release
+Una vez nuestra solución ya ha compilado lo siguiente que vamos a realizar es implementar una Release. Una release tendrá que tener todos los pasos necesarios para poder desplegar/actualizar nuestros desarrollos en SharePoint Online. 
+
+¿Qué procesos tendremos que llevar a cabo? Todo dependera de lo que lleve nuestro desarrollo en este laboratorio vamos a centrarnos en la parte de Spfx al ser relativamente lo más novedoso y quizas donde más dudas tengamos. En la release lo que vamos a tener será por un lado el despliegue de nuestra solución en el App Catalog. Una vez la tenemos instalada la desplegamos para que se pueda utilizar en cualquier tenant de nuestra organización. Posteriormente lo que vamos a realizar es activar dicha solución en el site collection que vamos a desplegar. Por últimos podemos crearnos una página e insertar el WebPart que hemos creado. Para llevar a cabo todos estos pasos vamos a apoyarnos de herramientas que a estas alturas de Workshop ya nos será de mucho conocimiento como son Office Cli y Pnp Commands.
+
+## 2.1 Definición de los artefactos que se van a utilizar
+Podemos definir los artefactos como todo aquello que vamos a utilizar en nuestra Release, puede ser desde el propio código fuente de nuestra aplicación, hasta los ficheros generados de una compilación anterior. Para esta Build por un lado vamos a seleccionar la rama de nuestro código (debido a que en ella tenemos alguno de los comandos Powershell que vamos a lanzar) y por otro lado el resultado de la Build anterior (en la cual se encuentra el packete que vamos a desplegar en el catalogo de productos.) Tendremos unos artefactos tal como los siguientes:
+![imagenartefacts](./assets/vsts/artefacts.PNG)
+
+Una vez tenemos los artefactos definidos, el siguiente paso que vamos a hacer es crearnos los entornos donde vamos a desplegar. En nuestro caso solamente vamos a desplegar en un único entorno pero esto se puede propagar a tantos entornos como se considere oportuno. Desde nuestro punto de vista lo ideal serian un minimo de tres entornos  DEV, PRE y PRO. Ya queda a debate si los mismos site colecction sobre el mismo tenant o sobre varios tenants. Ambas opciones tienen sus ventajas como sus inconvenientes.
+![environment](./assets/vsts/environment.PNG)
+
+## 2.2 Tareas a realizar en el environment
+Las tareas que vamos a realizar son:
+![tareasrelease] (./assets/vsts/task.PNG) 
+
+En la tarea de Extraer los ficheros, tendremos que configurar la ubicación donde se extraera el fichero zip generado en la release:
+![extractfiles] (./assets/vsts/extractfiles.png) 
+
+Despues instalaremos Office365 Cli para ello selccionamos una tarea de NPM y la configuramos como la siguiente:
+![office365cli] (./assets/vsts/cli.png)
+
+Una vez tenemos instalado OfficeCli el siguiente pasa es conectarnos con el App Catalog, para ello utilizaremos una tarea de linea de comandos, como herramienta introduciremos o365 y en arguments pondriamos la accion a realizar. Quedando de la siguiente forma:
+![connectAppCatalog] (./assets/vsts/appcatalog.png)
+
+Como podeis ver toda la llamadas estan configurables con variables, estas variables UserName, Password y SiteCollection estan alojadas en VSTS y tendremos que darlas de alta en la pestaña de Variables.
+Nota: Para que OfficeCli os funcione en la Build previamente deberemos de acceder desde la linea de comandos y aceptar los permisos de la aplicación, de lo contrario no se podrá utilizar.
+
+
+
+
+ 
