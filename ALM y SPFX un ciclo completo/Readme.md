@@ -239,7 +239,13 @@ Authorization: Bearer <access token>
 X-RequestDigest: <form digest>
 Accept: 'application/json;odata=nometadata'
 ```
-Nota: cuando eliminamos una aplicación mediante la API Rest la aplicación NO va a la papelera de reciclaje
+**Nota**: cuando eliminamos una aplicación mediante la API Rest la aplicación NO va a la papelera de reciclaje
+
+Para poder probar todos estos comandos se puede hacer de una forma sencilla mediante los comandos de PnP podemos obtener un token.
+```ps
+  Get-PnPAccessToken
+``` 
+Y con este token lo podemos utilizar con herramientas como Fidler o Postman para realizar dichas peticiones.
 
 
 
@@ -316,6 +322,53 @@ Una vez tenemos instalado OfficeCli el siguiente pasa es conectarnos con el App 
 
 Como podeis ver toda la llamadas estan configurables con variables, estas variables UserName, Password y SiteCollection estan alojadas en VSTS y tendremos que darlas de alta en la pestaña de Variables.
 Nota: Para que OfficeCli os funcione en la Build previamente deberemos de acceder desde la linea de comandos y aceptar los permisos de la aplicación, de lo contrario no se podrá utilizar.
+
+A continuación lo que vamos a realizar es añadir la solución de nuestra aplicación en el catálogo, para ello añadiremos otra tarea de "Command Line" en la que tendremos que ejecutar otra vez la siguiente instrucción de Office365cli:
+```ps
+spo app add -p $(System.DefaultWorkingDirectory)\build\release\src\sharepoint\solution\spfx-alm.sppkg --overwrite
+```
+**Nota**: la ubicación del package tener en cuenta que debe ser la ubicación donde hemos descomprimido el artefacto, más la ubicación del mismo. Esto puede variar dependiendo de cada caso
+
+Para finalizar el proceso de despligue, vamos a desplegar la App para que se pueda utilizar para ello de la misma forma que en el punto anterior crearemos una tarea de CommandLine y ejecutaremos la siguiente instrucción.
+```ps
+spo app deploy --id GUIDDELASOLUCION 
+```
+
+Una vez tenemos la App instalada vamos a crearnos una página moderna en nuestro tenant, para ello vamos a ejecutar el powershell que tenemos en la solución 
+```ps
+[CmdletBinding()]
+Param(
+	[Parameter(Mandatory=$True,Position=1)]
+    [string]$SiteUrl,
+
+	[Parameter(Mandatory=$True)]
+	[string]$UserName,
+
+	[Parameter(Mandatory=$True)]
+	[string]$Password
+)
+Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
+Install-Module SharePointPnPPowerShellOnline -Force -Verbose -Scope CurrentUser
+
+$0 = $myInvocation.MyCommand.Definition
+$CommandDirectory = [System.IO.Path]::GetDirectoryName($0)
+
+Set-Location $CommandDirectory
+
+$PasswordAsSecure = ConvertTo-SecureString $Password -AsPlainText -Force
+$Credentials = New-Object System.Management.Automation.PSCredential ($UserName , $PasswordAsSecure)
+
+Connect-PnPOnline -Url $SiteUrl -Credentials $Credentials
+
+Add-PnPClientSidePage "SPSMadrid"
+```
+
+**NOTA** Instalación de PNP en VSTS, el agente de Release no tiene permisos para agregar nada sobre la maquina sobre la que se esta ejecutando por ello es necesario que al ejecutar los comandos de instalación de PnP hay que hacerlo a nivel del usuario que lo esta ejecutando.
+
+
+
+
+
 
 
 
