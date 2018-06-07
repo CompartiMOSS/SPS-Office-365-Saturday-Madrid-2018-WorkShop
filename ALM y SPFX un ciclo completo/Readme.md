@@ -306,13 +306,13 @@ Las tareas que vamos a realizar son:
 ![tareasrelease] (./assets/vsts/task.PNG) 
 
 En la tarea de Extraer los ficheros, tendremos que configurar la ubicación donde se extraera el fichero zip generado en la release:
-![extractfiles](./assets/vsts/extractfiles.png) 
+![extractfiles](./assets/vsts/extractfiles.PNP) 
 
 Despues instalaremos Office365 Cli para ello selccionamos una tarea de NPM y la configuramos como la siguiente:
-![office365cli](./assets/vsts/cli.png)
+![office365cli](./assets/vsts/cli.PNG)
 
 Una vez tenemos instalado OfficeCli el siguiente pasa es conectarnos con el App Catalog, para ello utilizaremos una tarea de linea de comandos, como herramienta introduciremos o365 y en arguments pondriamos la accion a realizar. Quedando de la siguiente forma:
-![connectAppCatalog] (./assets/vsts/appcatalog.png)
+![connectAppCatalog](./assets/vsts/appcatalog.PNG)
 
 Como podeis ver toda la llamadas estan configurables con variables, estas variables UserName, Password y SiteCollection estan alojadas en VSTS y tendremos que darlas de alta en la pestaña de Variables.
 Nota: Para que OfficeCli os funcione en la Build previamente deberemos de acceder desde la linea de comandos y aceptar los permisos de la aplicación, de lo contrario no se podrá utilizar.
