@@ -47,8 +47,7 @@ En este laboratorio crearemos un conector personalizado que haga llamadas a Micr
 
 ![Screenshot](media/seleccionarPermisosAPI.png)
 
-1. Para nuestro ejemplo seleccionaremos
--	[TODO] Read user tasks
+1. Para nuestro ejemplo seleccionaremos "Sign in and read user profile"
 1. Una vez hayamos seleccionado los permisos pulsamos sobre Listo para guardar los cambios.
 1. Ahora necesitamos generar una clave para acceder al API, para en la pantalla de configuración de la aplicación pulsamos sobre Claves
 
@@ -116,15 +115,13 @@ En este laboratorio crearemos un conector personalizado que haga llamadas a Micr
  ![Screenshot](media/anadirAcciones.png)
 
 1. Pulsamos sobre Nueva acción en el panel de la derecha.
-1. En la siguiente pantalla nos solicita un nombre, descripción e identificador para la acción. En nuestro ejemplo obtendremos las tareas de un usuario.
+1. En la siguiente pantalla nos solicita un nombre, descripción e identificador para la acción. En nuestro ejemplo obtendremos el perfil del usuario.
 
  ![Screenshot](media/generalAcciones.png)
 
 1. Hacemos scroll hacia abajo y vemos que nos solicita detalles sobre la consulta que tiene que realizar. Pulsaremos sobre Importar desde ejemplo
 
- ![Screenshot](media/importarSolicitud.png)
-
-1. En el panel que se muestra introducir como verbo GET y la url https://graph.microsoft.com/v1.0/me/planner/tasks. Podéis probar las consultas en el explorador de Graph https://developer.microsoft.com/en-us/graph/graph-explorer, además es bueno ya que necesitaremos el cuerpo de la respuesta en el siguiente paso. Una vez que hayamos introducido la url de la consulta pulsar sobre Importar
+1. En el panel que se muestra introducir como verbo GET y la url https://graph.microsoft.com/v1.0/me. Podéis probar las consultas en el explorador de Graph https://developer.microsoft.com/en-us/graph/graph-explorer, además es bueno ya que necesitaremos el cuerpo de la respuesta en el siguiente paso. Una vez que hayamos introducido la url de la consulta pulsar sobre Importar
 
  ![Screenshot](media/importarEjemplo.png)
 
@@ -135,53 +132,22 @@ En este laboratorio crearemos un conector personalizado que haga llamadas a Micr
 1. Se nos muestra una pantalla para introducir el formato de la respuesta, podemos ejecutar la consulta en Graph Explorer y obtener la respuesta, o copiar 
 
 ````json
+
 {
-    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#Collection(microsoft.graph.plannerTask)",
-    "@odata.count": 1,
-    "@odata.nextLink": "https://graph.microsoft.com/v1.0/me/planner/tasks?$skiptoken=1%2523A%2b%2b8w28w4BhAUydElN2sKAo9ckAH4Cx",
-    "value": [
-        {
-            "@odata.etag": "W/\"JzEtVGFzayAgQEBAQEBAQEBAQEBAQEBASCc=\"",
-            "planId": "izWQ0k_J_U2sWsnatQ2cuMkACIZZ",
-            "bucketId": "pkClhA3f50m83z_ZJG7LtMkANxhA",
-            "title": "Disfrutar el SharePoint Saturda Madrid",
-            "orderHint": "8586740023894722922",
-            "assigneePriority": "8586740022099644192",
-            "percentComplete": 0,
-            "startDateTime": null,
-            "createdDateTime": "2018-05-29T14:34:56.0052885Z",
-            "dueDateTime": null,
-            "hasDescription": false,
-            "previewType": "automatic",
-            "completedDateTime": null,
-            "completedBy": null,
-            "referenceCount": 0,
-            "checklistItemCount": 0,
-            "activeChecklistItemCount": 0,
-            "conversationThreadId": null,
-            "id": "8w28w4BhAUydElN2sKAo9ckAH4Cx",
-            "createdBy": {
-                "user": {
-                    "displayName": null,
-                    "id": "07f8ff51-0d1a-4c7f-adfa-1376a1047ee6"
-                }
-            },
-            "appliedCategories": {},
-            "assignments": {
-                "07f8ff51-0d1a-4c7f-adfa-1376a1047ee6": {
-                    "@odata.type": "#microsoft.graph.plannerAssignment",
-                    "assignedDateTime": "2018-05-29T14:37:55.5131615Z",
-                    "orderHint": "",
-                    "assignedBy": {
-                        "user": {
-                            "displayName": null,
-                            "id": "07f8ff51-0d1a-4c7f-adfa-1376a1047ee6"
-                        }
-                    }
-                }
-            }
-        }
-    ]
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users/$entity",
+    "id": "48d31887-5fad-4d73-a9f5-3c356e68a038",
+    "businessPhones": [
+        "+1 412 555 0109"
+    ],
+    "displayName": "Megan Bowen",
+    "givenName": "Megan",
+    "jobTitle": "Auditor",
+    "mail": "MeganB@M365x214355.onmicrosoft.com",
+    "mobilePhone": null,
+    "officeLocation": "12/1110",
+    "preferredLanguage": "en-US",
+    "surname": "Bowen",
+    "userPrincipalName": "MeganB@M365x214355.onmicrosoft.com"
 }
 ````
 
@@ -194,34 +160,4 @@ En este laboratorio crearemos un conector personalizado que haga llamadas a Micr
  ![Screenshot](media/actualizarConector.png)
 
 1. Con esto ya tenemos creada la operación. Sólo nos queda crear un Flow para probar nuestro conector
-
-## Probar el conector
-
-1. Ir a Planner y añadir varias tareas asignándolas a nuestro usuario
-
- ![Screenshot](media/agregarTareas.png)
-
-1. Vamos a la página de Flow y creamos un Flow nuevo, para ello vamos a Mis flujos y pulsamos sobre Crear desde cero
-
- ![Screenshot](media/nuevoFlow.png)
-
-1. En la siguiente pantalla pulsamos sobre Crear desde cero
-
- ![Screenshot](media/crearFlow.png)
-
-1. Lo que haremos es crear una tarea periódica que nos devuelva nuestras tareas, para ello, como desencadenador añadimos Programación – Periocidad e introducimos cada cuanto tiempo queremos que nos avise, si pulsamos sobre opciones avanzadas, podemos configurarlo con más precisión
-
- ![Screenshot](media/timmer.png)
-
-1. Una vez configurado el timer pulsamos sobre Nuevo Paso y Agregar una acción
-
- ![Screenshot](media/agregarAccionFlow.png)
-
-1. En la caja de texto buscamos el nombre que hemos puesto a nuestro conector
-
- ![Screenshot](media/agregarConectorFlow.png)
-
-1. Una vez seleccionado el conector, seleccionamos la acción que queremos, en nuestro caso, Get my tasks
-
- ![Screenshot](media/agregadoConectorFlow.png)
 
